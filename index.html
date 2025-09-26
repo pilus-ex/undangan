@@ -358,20 +358,20 @@
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- Firebase SDK -->
+ <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
   <script>
     // 🔹 Ganti dengan config Firebase kamu
     var firebaseConfig = {
-     apiKey: "AIzaSyDIj6LBTljSuk6RudDP2sYOY95wbny6CzI",
-  authDomain: "undangan-b2a23.firebaseapp.com",
-  databaseURL: "https://undangan-b2a23-default-rtdb.firebaseio.com",
-  projectId: "undangan-b2a23",
-  storageBucket: "undangan-b2a23.firebasestorage.app",
-  messagingSenderId: "192665161957",
-  appId: "1:192665161957:web:fdb3a47d41ad6d3965840c",
+       apiKey: "AIzaSyDIj6LBTljSuk6RudDP2sYOY95wbny6CzI",
+       authDomain: "undangan-b2a23.firebaseapp.com",
+       databaseURL: "https://undangan-b2a23-default-rtdb.firebaseio.com",
+       projectId: "undangan-b2a23",
+       storageBucket: "undangan-b2a23.firebasestorage.app",
+       messagingSenderId: "192665161957",
+       appId: "1:192665161957:web:16c30254795800b465840c",
     };
     firebase.initializeApp(firebaseConfig);
     var db = firebase.database();
@@ -414,7 +414,7 @@
       updateSisa();
     });
 
-     // Render realtime ucapan
+    // Render realtime ucapan
     db.ref("ucapan").limitToLast(50).on("child_added", (snapshot)=>{
       const x = snapshot.val();
       if(daftar.children[0] && daftar.children[0].innerText.includes("Belum ada ucapan")){
@@ -436,7 +436,7 @@
         </div>
       `;
       daftar.prepend(li);
-    });
+    }
     
     <script>
     // Waktu Akad (WIB = UTC+7)
