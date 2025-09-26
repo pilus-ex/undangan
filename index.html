@@ -324,8 +324,7 @@
             <div class="flex justify-end text-xs text-[#4b3a25] mt-1"><span id="sisa">320</span> karakter tersisa</div>
           </div>
           <div class="flex items-center gap-3">
-            <button type="submit" class="btn">Kirim</button>
-            <button type="button" id="hapusSemua" class="btn-outline">Hapus Semua</button>
+            <button type="submit" class="btn">Kirim</button
           </div>
           <p class="text-xs text-[#4b3a25]">Ucapan tersimpan di perangkat ini.</p>
         </form>
@@ -598,11 +597,7 @@
 
     // Segarkan & Hapus
     segarkan.addEventListener('click', ()=>{ renderUcapan(); showToast('Disegarkan'); });
-    hapusSemua.addEventListener('click', ()=>{
-      if(confirm('Hapus semua ucapan yang tersimpan di perangkat ini?')){
-        localStorage.removeItem(KEY);
-        renderUcapan();
-        showToast('Semua ucapan dihapus');
+
       }
     });
 
