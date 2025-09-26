@@ -458,65 +458,7 @@
     const segarkan = document.getElementById('segarkan');
     const hapusSemua = document.getElementById('hapusSemua');
 
-  
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-  <script>
-    // 🔹 Ganti dengan config Firebase kamu
-    var firebaseConfig = {
-      apiKey: "AIzaSyDIj6LBTljSuk6RudDP2sYOY95wbny6CzI",
-      authDomain: "undangan-b2a23.firebaseapp.com",
-      databaseURL: "https://undangan-b2a23-default-rtdb.firebaseio.com",
-      projectId: "undangan-b2a23",
-      storageBucket: "undangan-b2a23.firebasestorage.app",
-      messagingSenderId: 192665161957",
-      appId: "1:192665161957:web:125fdf955b3c187265840c"
-    };
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.database();
-
-    form.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const n = nama.value.trim();
-  const p = pesan.value.trim();
-  if(!n || !p){ showToast('Lengkapi nama & ucapan'); return; }
-
-  const item = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-    nama: n,
-    pesan: p,
-    ts: Date.now()
-  };
-
-  db.ref("ucapan").push(item);  // 🔹 simpan ke Firebase
-
-  form.reset();
-  updateSisa();
-  showToast('Ucapan terkirim');
-});
-
-    function renderUcapan(){
-  daftar.innerHTML = `<li class="text-sm text-[#4b3a25]">Memuat ucapan...</li>`;
-  db.ref("ucapan").limitToLast(50).on("child_added", (snapshot)=>{
-    const x = snapshot.val();
-    const inisial = (x.nama || 'Tamu').trim().charAt(0).toUpperCase() || 'T';
-    const li = document.createElement("li");
-    li.className = "p-3 rounded-lg border border-[--gold]/30 bg-white/85";
-    li.innerHTML = `
-      <div class="flex items-start gap-3">
-        <div class="w-9 h-9 rounded-full bg-[--gold]/20 text-[--brown-dark] flex items-center justify-center font-bold">${inisial}</div>
-        <div class="min-w-0">
-          <div class="flex items-center justify-between gap-3">
-            <p class="font-semibold text-[#241B0D] truncate">${x.nama || 'Tamu'}</p>
-            <span class="text-[11px] text-[#6b5a3c] whitespace-nowrap">${fmtTime(x.ts)}</span>
-          </div>
-          <p class="mt-1 text-[15px] text-[#3b2f1f] break-words">${escapeHTML(x.pesan || '')}</p>
-        </div>
-      </div>
-    `;
-    daftar.prepend(li); // ucapan terbaru tampil di atas
   });
 }
 
