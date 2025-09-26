@@ -554,11 +554,8 @@
 
     // Segarkan & Hapus
     segarkan.addEventListener('click', ()=>{ renderUcapan(); showToast('Disegarkan'); });
-    hapusSemua.addEventListener('click', ()=>{
-      if(confirm('Hapus semua ucapan yang tersimpan di perangkat ini?')){
-        localStorage.removeItem(KEY);
+    
         renderUcapan();
-        showToast('Semua ucapan dihapus');
       }
     });
 
