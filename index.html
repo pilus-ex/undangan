@@ -324,7 +324,8 @@
             <div class="flex justify-end text-xs text-[#4b3a25] mt-1"><span id="sisa">320</span> karakter tersisa</div>
           </div>
           <div class="flex items-center gap-3">
-            <button type="submit" class="btn">Kirim</button
+            <button type="submit" class="btn">Kirim</button>
+            <button type="button" id="hapusSemua" class="btn-outline">Hapus Semua</button>
           </div>
           <p class="text-xs text-[#4b3a25]">Ucapan tersimpan di perangkat ini.</p>
         </form>
@@ -357,87 +358,7 @@
   <!-- Toast -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
- <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
   <script>
-    // 🔹 Ganti dengan config Firebase kamu
-    var firebaseConfig = {
-       apiKey: "AIzaSyDIj6LBTljSuk6RudDP2sYOY95wbny6CzI",
-       authDomain: "undangan-b2a23.firebaseapp.com",
-       databaseURL: "https://undangan-b2a23-default-rtdb.firebaseio.com",
-       projectId: "undangan-b2a23",
-       storageBucket: "undangan-b2a23.firebasestorage.app",
-       messagingSenderId: "192665161957",
-       appId: "1:192665161957:web:16c30254795800b465840c",
-    };
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.database();
-
-    const form = document.getElementById('formUcapan');
-    const nama = document.getElementById('nama');
-    const pesan = document.getElementById('pesan');
-    const daftar = document.getElementById('daftarUcapan');
-    const sisa = document.getElementById('sisa');
-
-    function fmtTime(ts){
-      const d = new Date(ts);
-      return d.toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' });
-    }
-    function escapeHTML(str){
-      return str.replace(/[&<>"']/g, (m)=>({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[m]));
-    }
-
-    // Hitung karakter tersisa
-    function updateSisa(){ sisa.textContent = 320 - (pesan.value?.length || 0); }
-    pesan.addEventListener('input', updateSisa);
-    updateSisa();
-
-    // Kirim ucapan ke Firebase
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const n = nama.value.trim();
-      const p = pesan.value.trim();
-      if(!n || !p){ alert('Lengkapi nama & ucapan'); return; }
-
-      const item = {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        nama: n,
-        pesan: p,
-        ts: Date.now()
-      };
-
-      db.ref("ucapan").push(item);
-      form.reset();
-      updateSisa();
-    });
-
-    // Render realtime ucapan
-    db.ref("ucapan").limitToLast(50).on("child_added", (snapshot)=>{
-      const x = snapshot.val();
-      if(daftar.children[0] && daftar.children[0].innerText.includes("Belum ada ucapan")){
-        daftar.innerHTML = "";
-      }
-      const inisial = (x.nama || 'Tamu').trim().charAt(0).toUpperCase() || 'T';
-      const li = document.createElement("li");
-      li.className = "p-3 rounded-lg border border-yellow-400 bg-white";
-      li.innerHTML = `
-        <div class="flex items-start gap-3">
-          <div class="w-9 h-9 rounded-full bg-yellow-200 text-yellow-800 flex items-center justify-center font-bold">${inisial}</div>
-          <div class="min-w-0">
-            <div class="flex items-center justify-between gap-3">
-              <p class="font-semibold text-gray-900 truncate">${x.nama || 'Tamu'}</p>
-              <span class="text-[11px] text-gray-500 whitespace-nowrap">${fmtTime(x.ts)}</span>
-            </div>
-            <p class="mt-1 text-[15px] text-gray-700 break-words">${escapeHTML(x.pesan || '')}</p>
-          </div>
-        </div>
-      `;
-      daftar.prepend(li);
-    }
-    
-    <script>
     // Waktu Akad (WIB = UTC+7)
     const akadISO = "2025-06-22T08:00:00+07:00";
 
@@ -525,10 +446,26 @@
       const full = 'Bank ABC • 1114448887 • a.n. Lulu Annisa Juhairiyah';
       navigator.clipboard?.writeText(full).then(()=>showToast('Detail rekening disalin')).catch(()=>showToast('Gagal menyalin'));
     });
-    
-}
 
-    
+    // Doa & Ucapan - localStorage
+    const KEY = 'ucapan_anton_ria_v1';
+    const form = document.getElementById('formUcapan');
+    const nama = document.getElementById('nama');
+    const pesan = document.getElementById('pesan');
+    const daftar = document.getElementById('daftarUcapan');
+    const sisa = document.getElementById('sisa');
+    const segarkan = document.getElementById('segarkan');
+    const hapusSemua = document.getElementById('hapusSemua');
+
+    function loadUcapan(){
+      try {
+        const data = JSON.parse(localStorage.getItem(KEY)) || [];
+        return Array.isArray(data) ? data : [];
+      } catch { return []; }
+    }
+    function saveUcapan(data){
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
     function fmtTime(ts){
       const d = new Date(ts);
       return d.toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' });
@@ -584,7 +521,11 @@
 
     // Segarkan & Hapus
     segarkan.addEventListener('click', ()=>{ renderUcapan(); showToast('Disegarkan'); });
-
+    hapusSemua.addEventListener('click', ()=>{
+      if(confirm('Hapus semua ucapan yang tersimpan di perangkat ini?')){
+        localStorage.removeItem(KEY);
+        renderUcapan();
+        showToast('Semua ucapan dihapus');
       }
     });
 
@@ -603,5 +544,5 @@
       });
     });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9832a873f490fd31',t:'MTc1ODU1MzA4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98513fb897a3cdd1',t:'MTc1ODg3Mzg1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
